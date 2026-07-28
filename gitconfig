@@ -1,0 +1,11 @@
+[user]
+	name = Kevin Lee
+	# email = you@company.com
+[core]
+	editor = nvim
+	pager = less -FRXS
+[color]
+	ui = true
+[merge]
+	tool = vimdiff
+	summary = true
