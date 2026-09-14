@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Works as either ~/.bashrc or ~/.bashrc.user; install.sh picks. Where a
-# managed ~/.bashrc already set a PS1, this runs after it and wins.
+# Sourced as ~/.bashrc. Where something else already set a PS1, this runs after
+# it and wins.
 
 # /etc/bashrc guards itself with BASHRCSOURCED, so this is a no-op when a
 # managed ~/.bashrc has already done it.
@@ -59,9 +59,9 @@ elif [[ -r "${HOME}/.fzf.bash" ]]; then
     source "${HOME}/.fzf.bash"
 fi
 
-if [[ -r "${HOME}/.bashrc.user.local" ]]; then
+if [[ -r "${HOME}/.bashrc.local" ]]; then
     # shellcheck source=/dev/null
-    source "${HOME}/.bashrc.user.local"
+    source "${HOME}/.bashrc.local"
 fi
 
 # Flush per command; bash otherwise only writes history on a clean exit.
