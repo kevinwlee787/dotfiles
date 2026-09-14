@@ -1,21 +1,27 @@
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
-fi
+#!/usr/bin/env bash
+# Works as either ~/.bashrc or ~/.bashrc.user; install.sh picks. Where a
+# managed ~/.bashrc already set a PS1, this runs after it and wins.
 
-# VCS-aware prompt (https://github.com/meadowface/bash-prompt-vcs)
-if [ -f $HOME/.bash-prompt-vcs.bash ]; then
-    . $HOME/.bash-prompt-vcs.bash
-    export PS1="\u@\h:\w\$(bpvcs_bash_prompt)\$ "
+# /etc/bashrc guards itself with BASHRCSOURCED, so this is a no-op when a
+# managed ~/.bashrc has already done it.
+if [ -f /etc/bashrc ]; then
+    # shellcheck source=/dev/null
+    . /etc/bashrc
 fi
 
 export LANG=en_US.utf-8
 export LC_ALL="$LANG"
 export EDITOR=nvim
 
-# Disable flow control (frees up Ctrl-S/Ctrl-Q)
-stty -ixoff
-stty -ixon
+# Free up Ctrl-S/Ctrl-Q. Needs a tty; sshd sources this non-interactively.
+if [[ $- == *i* ]]; then
+    stty -ixoff
+    stty -ixon
+fi
+
+[[ -d "${HOME}/usr/bin" ]] && export PATH="${HOME}/usr/bin:${PATH}"
+
+alias tmux='TERM=xterm-256color tmux'
 
 # Refresh tmux environment variables in current shell
 function tmup() {
@@ -33,37 +39,30 @@ function tmup() {
     echo "Done"
 }
 
-alias tmux='TERM=xterm-256color tmux'
-
-# Compiler switching (gcc/clang)
-export COMPILER_FILE=$HOME/.config/compiler
-
-# Note: this might not work or be needed
-function compiler {
-    case "$1" in
-        'gcc')
-            export CC=gcc
-            export CXX=g++
-            export BUILD_DIR=build
-            ;;
-        'clang')
-            export CC=clang
-            export CXX=clang++
-            export BUILD_DIR=build.clang
-            ;;
-         *)
-            echo "unsupported compiler"
-            return 1
-    esac
-    if [ -z "$2" ]; then
-        echo "$1" > $COMPILER_FILE
-    fi
-}
-
-if [ -f "$COMPILER_FILE" ]; then
-    compiler $(cat $COMPILER_FILE) false
+# Show version control state in the prompt.
+# The backslash in \$(bpvcs_bash_prompt) is required: it defers the call to
+# each prompt render instead of running it once, here.
+if [[ -r "${HOME}/.bash-prompt-vcs.bash" ]]; then
+    # shellcheck source=/dev/null
+    source "${HOME}/.bash-prompt-vcs.bash"
+    PS1="\u@\h:\w\$(bpvcs_bash_prompt)\$ "
 fi
 
-export PATH=~/usr/bin:$PATH
+# fzf key bindings and completion:
+#   Ctrl-R  fuzzy search command history
+#   Ctrl-T  insert a file path at the cursor
+#   Alt-C   cd into a subdirectory
+if command -v fzf >/dev/null 2>&1; then
+    eval "$(fzf --bash)"
+elif [[ -r "${HOME}/.fzf.bash" ]]; then
+    # shellcheck source=/dev/null
+    source "${HOME}/.fzf.bash"
+fi
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+if [[ -r "${HOME}/.bashrc.user.local" ]]; then
+    # shellcheck source=/dev/null
+    source "${HOME}/.bashrc.user.local"
+fi
+
+# Flush per command; bash otherwise only writes history on a clean exit.
+PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; ${PROMPT_COMMAND}}"

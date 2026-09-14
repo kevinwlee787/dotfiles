@@ -6,43 +6,62 @@ Personal development environment config for Linux containers.
 
 - `nvim/` - Neovim config (lazy.nvim, native LSP, blink-cmp, fzf-lua, catppuccin)
 - `tmux.conf` - tmux config
-- `bashrc` - Portable shell setup (editor, prompt, compiler switching, fzf)
+- `bashrc` - Shell setup (editor, prompt, fzf, tmux, history)
 - `gitconfig` - Git defaults (set email per-machine)
-- `install.sh` - Symlinks everything into place
 
 ## Prerequisites
 
-- **Neovim** 0.10+
+- **Neovim** 0.11+ (0.12 for the `:lsp` command; `:LspRestart` no longer exists)
 - **tmux**
 - **fzf** - https://github.com/junegunn/fzf
 - **bash-prompt-vcs** - https://github.com/meadowface/bash-prompt-vcs
-  - Copy `bash-prompt-vcs.bash` to `~/.bash-prompt-vcs.bash`
+  - copy `bash-prompt-vcs.bash` to `~/.bash-prompt-vcs.bash`
 - **Git**
 - **Node.js** (required by some LSP servers via Mason)
-- **Java 11+** (required for jdtls)
+- **Java 21+** (jdtls refuses to launch below 21)
 
 ## LSP Servers
 
 Managed by Mason (auto-installed on first launch):
 
-- `clangd` - C/C++ (update path in `nvim/lua/plugins/lsp/init.lua` if not in PATH)
+- `clangd` - C/C++ (deliberately **not** from Mason; uses the toolchain's own clangd from PATH)
 - `jdtls` - Java
 - `basedpyright` - Python
 - `lua_ls` - Lua
 - `rust_analyzer` - Rust
+- `starpls` - Starlark / Bazel BUILD files
+- `bazelrc_lsp` - `.bazelrc` files
 
 ### Project setup
 
-- **C/C++**: Requires `compile_commands.json` at the project root for clangd to resolve includes and flags. Generate with `cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`.
-- **Java**: No extra files needed. jdtls reads `pom.xml` (Maven) or `build.gradle` (Gradle) directly.
+- **C/C++**: Requires `compile_commands.json` at the project root. Generate with `cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`, or with whatever your build system provides.
+- **Java**: With Maven or Gradle, nothing extra is needed. On Bazel there is no `pom.xml`/`build.gradle`, so jdtls imports the workspace as an "invisible project" and needs `java.project.sourcePaths` and `referencedLibraries` set per repository.
 
 ## Install
 
 ```bash
 git clone <repo-url> ~/dotfiles
-cd ~/dotfiles
-./install.sh
+mkdir -p ~/.config
+ln -sfn ~/dotfiles/nvim ~/.config/nvim
+ln -sfn ~/dotfiles/tmux.conf ~/.tmux.conf
+ln -sfn ~/dotfiles/gitconfig ~/.gitconfig
+ln -sfn ~/dotfiles/bashrc ~/.bashrc
 ```
+
+Move anything already at those paths aside first. `ln -sfn` overwrites a regular
+file with no warning, and against a real directory it links *inside* it
+(`~/.config/nvim/nvim`), leaving the config quietly not loading.
+
+One exception to the last line. Some environments manage `~/.bashrc` themselves,
+regenerate it, and source `~/.bashrc.user` for your additions; replacing that
+file breaks them on the next rebuild. Check with:
+
+```bash
+grep -l '\.bashrc\.user' ~/.bashrc
+```
+
+On a match, link `~/dotfiles/bashrc` to `~/.bashrc.user` instead and leave
+`~/.bashrc` alone. Same file either way.
 
 Then set your git email:
 
