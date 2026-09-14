@@ -1,7 +1,10 @@
+-- Pinned to master: nvim-treesitter's main branch is the rewrite, which drops
+-- the nvim-treesitter.configs module that M.config below calls into.
 local M = {
   'nvim-treesitter/nvim-treesitter',
+  branch = 'master',
   dependencies = {
-    'nvim-treesitter/nvim-treesitter-textobjects',
+    { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'master' },
   },
   event = { 'VeryLazy', 'BufReadPost', 'BufWritePost', 'BufNewFile' },
   build = ':TSUpdate',
@@ -13,6 +16,7 @@ M.opts = {
     'c',
     'cmake',
     'cpp',
+    'java',
     'javascript',
     'json',
     'lua',
@@ -22,6 +26,7 @@ M.opts = {
     'query',
     'regex',
     'rust',
+    'starlark',
     'vim',
     'vimdoc',
     'yaml',
