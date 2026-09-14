@@ -105,8 +105,9 @@ one repository. Copy the `.example` sibling of each and edit:
   says what has to be in it. Without it jdtls falls back to its defaults, which
   on a Bazel workspace means no source roots and no third-party jars - and it
   will not start at all unless `java` on PATH is 21 or newer.
-- `~/.bashrc.user.local` - anything site-specific: internal tooling, private
-  hostnames, per-machine paths. Copy `bashrc.user.local.example` to start.
+- `~/.bashrc.user.local` - a plain bash file for anything site-specific:
+  internal tooling, private hostnames, per-machine paths. `bashrc.user` sources
+  it if it exists.
 
 Both are optional.
 
