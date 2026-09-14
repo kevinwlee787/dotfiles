@@ -100,14 +100,15 @@ ln -sfn ~/dotfiles/gitconfig ~/.gitconfig
 Two files are gitignored, because every value in them belongs to one machine or
 one repository. Copy the `.example` sibling of each and edit:
 
-| copy from | to |
-|---|---|
-| `nvim/lua/plugins/lsp/jdtls_local.example.lua` | `nvim/lua/plugins/lsp/jdtls_local.lua` |
-| `bashrc.user.local.example` | `~/.bashrc.user.local` |
+- `nvim/lua/plugins/lsp/jdtls_local.lua` - a jdtls server config table. The
+  comment above the `pcall` that loads it, in `nvim/lua/plugins/lsp/init.lua`,
+  says what has to be in it. Without it jdtls falls back to its defaults, which
+  on a Bazel workspace means no source roots and no third-party jars - and it
+  will not start at all unless `java` on PATH is 21 or newer.
+- `~/.bashrc.user.local` - anything site-specific: internal tooling, private
+  hostnames, per-machine paths. Copy `bashrc.user.local.example` to start.
 
-Both are optional. Without the first, jdtls falls back to its defaults, which on
-a Bazel workspace means no source roots and no third-party jars - and it will not
-start at all unless `java` on PATH is 21 or newer.
+Both are optional.
 
 Then set your git email:
 
