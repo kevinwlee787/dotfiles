@@ -183,9 +183,8 @@ function M.config()
     desc = 'lsp.cancel_pending_requests',
   })
 
-  -- Per-repository, so gitignored. Set both `settings` and
-  -- `init_options.settings`, and list Bazel's output jars in
-  -- referencedLibraries, which defaults to lib/**/*.jar.
+  -- Gitignored. Needs both `settings` and `init_options.settings`, and
+  -- referencedLibraries listed: it defaults to lib/**/*.jar.
   local has_jdtls_local, jdtls_local = pcall(require, 'plugins.lsp.jdtls_local')
 
   local servers = {

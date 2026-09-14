@@ -51,14 +51,12 @@ if command -v fzf >/dev/null 2>&1; then
     eval "$(fzf --bash)"
 fi
 
-# Machine-specific additions (internal tooling, per-site paths).
 if [[ -r "${HOME}/.bashrc.user.local" ]]; then
     # shellcheck source=/dev/null
     source "${HOME}/.bashrc.user.local"
 fi
 
-# Bazel shorthands. A bare `...` is relative to $PWD, so `bb` with no arguments
-# builds everything at or below the current directory.
+# A bare `...` is relative to $PWD, not the workspace root.
 alias bz='bazel'
 alias br='bazel run'
 bb() { bazel build "${@:-...}"; }
