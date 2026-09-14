@@ -183,16 +183,9 @@ function M.config()
     desc = 'lsp.cancel_pending_requests',
   })
 
-  -- jdtls needs per-repository configuration, so it lives in a gitignored
-  -- plugins/lsp/jdtls_local.lua returning a server config table. Two things
-  -- about that table are easy to get wrong:
-  --   * settings.java.project.referencedLibraries defaults to lib/**/*.jar, so
-  --     on Bazel nothing external resolves until the output jars are listed.
-  --   * the same settings table has to be passed twice, as `settings` and as
-  --     `init_options.settings`. jdtls reads source roots and libraries while
-  --     importing, before the didChangeConfiguration that Nvim drives from
-  --     `settings`.
-  -- cmd_env.JAVA_HOME belongs there too; jdtls refuses to launch below Java 21.
+  -- Per-repository, so gitignored. Set both `settings` and
+  -- `init_options.settings`, and list Bazel's output jars in
+  -- referencedLibraries, which defaults to lib/**/*.jar.
   local has_jdtls_local, jdtls_local = pcall(require, 'plugins.lsp.jdtls_local')
 
   local servers = {

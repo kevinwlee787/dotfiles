@@ -9,8 +9,7 @@ export LANG=en_US.utf-8
 export LC_ALL="$LANG"
 export EDITOR=nvim
 
-# Free up Ctrl-S/Ctrl-Q. Guarded because stty needs a tty, and sshd sources this
-# file for non-interactive commands.
+# Free up Ctrl-S/Ctrl-Q. Needs a tty; sshd sources this non-interactively.
 if [[ $- == *i* ]]; then
     stty -ixoff
     stty -ixon
@@ -65,7 +64,5 @@ alias br='bazel run'
 bb() { bazel build "${@:-...}"; }
 bt() { bazel test "${@:-...}"; }
 
-# Flush history after every command. Bash otherwise only writes it on a clean
-# exit, so a killed terminal multiplexer or container takes every window's
-# history with it.
+# Flush per command; bash otherwise only writes history on a clean exit.
 PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; ${PROMPT_COMMAND}}"

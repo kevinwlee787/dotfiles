@@ -19,7 +19,7 @@ Personal development environment config for Linux containers.
   - `bashrc` reads `~/.bash-prompt-vcs.bash`; `bashrc.user` reads `~/bash-prompt-vcs.bash`
 - **Git**
 - **Node.js** (required by some LSP servers via Mason)
-- **Java 11+** (required for jdtls)
+- **Java 21+** (jdtls refuses to launch below 21)
 
 ## LSP Servers
 

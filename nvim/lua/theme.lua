@@ -1,8 +1,7 @@
 local hl_map = {
   ['@lsp.type.comment']                     = {}, -- treesitter has better comment handling
   ['@lsp.typemod.namespace.defaultLibrary'] = { link = '@module.builtin' },
-  -- Catppuccin clears @lsp.type.variable so treesitter owns variables; that
-  -- leaves std::ignore and friends the plain text colour.
+  -- Catppuccin clears @lsp.type.variable, leaving std::ignore plain.
   ['@lsp.type.variable']                    = { link = 'Identifier' },
 
   --- clangd
