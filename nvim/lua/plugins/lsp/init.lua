@@ -2,6 +2,15 @@ local M = {
   'neovim/nvim-lspconfig',
   event = { 'VeryLazy', 'BufReadPost', 'BufWritePost', 'BufNewFile' },
   cond = require('globals').native_lsp and not vim.g.vscode,
+
+  -- Nvim has no bazelrc filetype, so bazelrc_lsp would never attach. This has
+  -- to run before the first file is read, which rules out M.config below.
+  init = function()
+    vim.filetype.add({
+      filename = { ['.bazelrc'] = 'bazelrc' },
+      pattern = { ['.*%.bazelrc'] = 'bazelrc' },
+    })
+  end,
   dependencies = {
     {
       'hrsh7th/cmp-nvim-lsp',
@@ -16,7 +25,9 @@ local M = {
     {
       'williamboman/mason-lspconfig.nvim',
       opts = {
-        automatic_installation = true,
+        -- clangd is deliberately absent: the build toolchain ships its own,
+        -- which has to be the one on PATH rather than Mason's.
+        ensure_installed = { 'basedpyright', 'bazelrc_lsp', 'jdtls', 'starpls' },
         automatic_enable = false,
       },
     },
@@ -46,7 +57,7 @@ function M.config()
   local clangd_ext = require('plugins.lsp.clangd_ext')
   local lua_ls_ext = require('plugins.lsp.lua_ls_ext')
 
-  lsp.set_log_level('OFF')
+  lsp.log.set_level('OFF')
 
   local use_float_progress = false
   status.setup(not use_float_progress)
@@ -172,6 +183,10 @@ function M.config()
     desc = 'lsp.cancel_pending_requests',
   })
 
+  -- Source roots, jars and JDK paths are per-repository, so jdtls's config
+  -- lives outside version control. See jdtls_local.example.lua.
+  local has_jdtls_local, jdtls_local = pcall(require, 'plugins.lsp.jdtls_local')
+
   local servers = {
     clangd = {
       cmd = {
@@ -199,10 +214,12 @@ function M.config()
         },
       },
     },
-    jdtls = {},
+    jdtls = has_jdtls_local and jdtls_local or {},
     rust_analyzer = {
       cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
     },
+    starpls = {},
+    bazelrc_lsp = {},
   }
 
   local capabilities = { textDocument = { foldingRange = { dynamicRegistration = false, lineFoldingOnly = true } } }
@@ -210,12 +227,12 @@ function M.config()
     capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
   end
 
+  lsp.config('*', { capabilities = capabilities })
+
   for client, config in pairs(servers) do
-    local server_opts = vim.tbl_deep_extend('force', {
-      capabilities = vim.deepcopy(capabilities),
-    }, config or {})
-    require('lspconfig')[client].setup(server_opts)
+    lsp.config(client, config)
   end
+  lsp.enable(vim.tbl_keys(servers))
 end
 
 return M

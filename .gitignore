@@ -1,0 +1,4 @@
+# Machine- and repository-specific config, kept out of version control so the
+# same history can be pushed to a public and an internal remote.
+nvim/lua/plugins/lsp/jdtls_local.lua
+bashrc.user.local
