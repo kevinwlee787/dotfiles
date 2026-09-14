@@ -19,6 +19,12 @@ return {
   {
     'catppuccin/nvim',
     name = 'catppuccin',
+    -- Nvim 0.12 bundles its own colors/catppuccin.vim. lazy.nvim skips loading
+    -- a colorscheme's plugin when the name already completes, so that bundled
+    -- scheme wins and none of the plugin integration highlights get defined.
+    -- Loading eagerly puts this plugin's colors/catppuccin.lua on the rtp first.
+    lazy = false,
+    priority = 1000,
     opts = {
       integrations = {
         dap = {
