@@ -12,7 +12,7 @@ Personal development environment config for Linux containers.
 
 ## Prerequisites
 
-- **Neovim** 0.11+ (0.12 for the `:lsp` command; `:LspRestart` no longer exists)
+- **Neovim** 0.12+
 - **tmux**
 - **fzf** - https://github.com/junegunn/fzf
 - **bash-prompt-vcs** - https://github.com/meadowface/bash-prompt-vcs
