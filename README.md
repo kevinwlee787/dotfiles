@@ -8,6 +8,7 @@ Personal development environment config for Linux containers.
 - `tmux.conf` - tmux config
 - `bashrc` - Shell setup (editor, prompt, fzf, tmux, history)
 - `gitconfig` - Git defaults (set email per-machine)
+- `install.sh` - Symlinks everything into place
 
 ## Prerequisites
 
@@ -41,27 +42,17 @@ Managed by Mason (auto-installed on first launch):
 
 ```bash
 git clone <repo-url> ~/dotfiles
-mkdir -p ~/.config
-ln -sfn ~/dotfiles/nvim ~/.config/nvim
-ln -sfn ~/dotfiles/tmux.conf ~/.tmux.conf
-ln -sfn ~/dotfiles/gitconfig ~/.gitconfig
-ln -sfn ~/dotfiles/bashrc ~/.bashrc
+~/dotfiles/install.sh
 ```
 
-Move anything already at those paths aside first. `ln -sfn` overwrites a regular
-file with no warning, and against a real directory it links *inside* it
-(`~/.config/nvim/nvim`), leaving the config quietly not loading.
+It symlinks `nvim`, `tmux.conf`, `gitconfig` and `bashrc` into place, moving
+anything already there to `.bak` rather than overwriting it, so it is safe on a
+machine that already has config.
 
-One exception to the last line. Some environments manage `~/.bashrc` themselves,
-regenerate it, and source `~/.bashrc.user` for your additions; replacing that
-file breaks them on the next rebuild. Check with:
+It assumes bash reads `~/.bashrc`, which is not true on macOS: Terminal opens
+login shells, and the default shell is zsh.
 
-```bash
-grep -l '\.bashrc\.user' ~/.bashrc
-```
-
-On a match, link `~/dotfiles/bashrc` to `~/.bashrc.user` instead and leave
-`~/.bashrc` alone. Same file either way.
+For machine-specific settings, `bashrc` sources `~/.bashrc.local` if it exists.
 
 Then set your git email:
 
