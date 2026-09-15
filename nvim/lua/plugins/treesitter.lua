@@ -26,7 +26,6 @@ M.opts = {
     'query',
     'regex',
     'rust',
-    'starlark',
     'vim',
     'vimdoc',
     'yaml',
