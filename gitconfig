@@ -3,7 +3,7 @@
 	# email = you@company.com
 [core]
 	editor = nvim
-	pager = less -FRXS
+	pager = less -FR
 [color]
 	ui = true
 [merge]
