@@ -59,10 +59,5 @@ elif [[ -r "${HOME}/.fzf.bash" ]]; then
     source "${HOME}/.fzf.bash"
 fi
 
-if [[ -r "${HOME}/.bashrc.local" ]]; then
-    # shellcheck source=/dev/null
-    source "${HOME}/.bashrc.local"
-fi
-
 # Flush per command; bash otherwise only writes history on a clean exit.
 PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; ${PROMPT_COMMAND}}"

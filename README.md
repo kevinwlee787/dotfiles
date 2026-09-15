@@ -49,11 +49,6 @@ It symlinks `nvim`, `tmux.conf`, `gitconfig` and `bashrc` into place, moving
 anything already there to `.bak` rather than overwriting it, so it is safe on a
 machine that already has config.
 
-It assumes bash reads `~/.bashrc`, which is not true on macOS: Terminal opens
-login shells, and the default shell is zsh.
-
-For machine-specific settings, `bashrc` sources `~/.bashrc.local` if it exists.
-
 Then set your git email:
 
 ```bash
