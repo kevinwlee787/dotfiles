@@ -2,15 +2,6 @@ local M = {
   'neovim/nvim-lspconfig',
   event = { 'VeryLazy', 'BufReadPost', 'BufWritePost', 'BufNewFile' },
   cond = require('globals').native_lsp and not vim.g.vscode,
-
-  -- Nvim has no bazelrc filetype, so bazelrc_lsp would never attach. This has
-  -- to run before the first file is read, which rules out M.config below.
-  init = function()
-    vim.filetype.add({
-      filename = { ['.bazelrc'] = 'bazelrc' },
-      pattern = { ['.*%.bazelrc'] = 'bazelrc' },
-    })
-  end,
   dependencies = {
     {
       'hrsh7th/cmp-nvim-lsp',
@@ -27,7 +18,7 @@ local M = {
       opts = {
         -- clangd is deliberately absent: the build toolchain ships its own,
         -- which has to be the one on PATH rather than Mason's.
-        ensure_installed = { 'basedpyright', 'bazelrc_lsp', 'jdtls', 'starpls' },
+        ensure_installed = { 'basedpyright', 'jdtls' },
         automatic_enable = false,
       },
     },
@@ -214,8 +205,6 @@ function M.config()
     rust_analyzer = {
       cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
     },
-    starpls = {},
-    bazelrc_lsp = {},
   }
 
   local capabilities = { textDocument = { foldingRange = { dynamicRegistration = false, lineFoldingOnly = true } } }
