@@ -55,4 +55,16 @@ Then set your git email:
 git config --global user.email "you@company.com"
 ```
 
-Open nvim and let lazy.nvim install plugins. Mason will handle LSP servers. Note: might have to use custom clangd binary
+Open nvim and let lazy.nvim install plugins. Mason will handle the LSP servers.
+
+### clangd
+
+Mason does not install clangd, and the config invokes a bare `clangd`, so
+whichever one is first on `PATH` wins. That is deliberate: a toolchain
+frequently ships its own clang build, patched for that codebase's libraries and
+tooling, and a stock clangd will disagree with it about include paths, standard
+library internals and flags. Putting the toolchain's `bin` on `PATH` ahead of
+anything else is usually enough. Where it is not, set an absolute path in
+`cmd` in `nvim/lua/plugins/lsp/init.lua`.
+
+`:checkhealth vim.lsp` reports the resolved binary and its version.
